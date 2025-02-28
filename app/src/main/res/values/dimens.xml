@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="label_text_size">24sp</dimen>
+    <dimen name="side_label_text_size">20sp</dimen>
+</resources>
