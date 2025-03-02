@@ -1,12 +1,16 @@
 package com.zybooks.pizzaparty
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.ceil
+
+private const val KEY_TOTAL_PIZZAS = "totalPizzas"
 
 /**
  * The main activity of the app
@@ -18,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var numAttendEditText: EditText
     private lateinit var numPizzasTextView: TextView
     private lateinit var howHungryRadioGroup: RadioGroup
+    private var totalPizzas = 0
 
     /**
      * On creation of MainActivity
@@ -33,6 +38,33 @@ class MainActivity : AppCompatActivity() {
         numAttendEditText = findViewById(R.id.num_attend_edit_text)
         numPizzasTextView = findViewById(R.id.num_pizzas_text_view)
         howHungryRadioGroup = findViewById(R.id.hungry_radio_group)
+
+        // Restore state
+        if (savedInstanceState != null) {
+            totalPizzas = savedInstanceState.getInt(KEY_TOTAL_PIZZAS);
+            displayTotal();
+        }
+    }
+
+    /**
+     * Stores the current total of pizzas in a state Bundle.
+     *
+     * @param outState
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_TOTAL_PIZZAS, totalPizzas)
+    }
+
+    /**
+     * Restores the total of pizzas from a state Bundle.
+     *
+     * @param savedInstanceState
+     */
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        totalPizzas = savedInstanceState.getInt(KEY_TOTAL_PIZZAS)
+        displayTotal()
     }
 
     /**
@@ -58,9 +90,16 @@ class MainActivity : AppCompatActivity() {
 
         // Get the number of pizzas needed
         val calc = PizzaCalculator(numAttend, hungerLevel)
-        val totalPizzas = calc.totalPizzas
+        totalPizzas = calc.totalPizzas
+        displayTotal()
+    }
 
-        // Place totalPizzas into the string resource and display
+    /**
+     * Place totalPizzas into the string resource and displays number of
+     * pizzas in the TextView
+     *
+     */
+    private fun displayTotal() {
         val totalText = getString(R.string.total_pizzas_num, totalPizzas)
         numPizzasTextView.text = totalText
     }
